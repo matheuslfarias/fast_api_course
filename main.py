@@ -49,8 +49,8 @@ async def get_curso(id: int = Path(default=None,
 @app.post('/cursos')
 async def post_curso(curso: Curso, status_code=status.HTTP_201_CREATED, db: Any = Depends(fake_db)):
     next_id:int = len(cursos)+1
-    cursos[next_id] = curso
-    del curso.id
+    curso.id = next_id
+    cursos.append(curso)
     return curso
 
 # PUT - UPDATE
