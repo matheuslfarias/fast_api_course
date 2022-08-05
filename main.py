@@ -42,7 +42,18 @@ async def post_curso(curso: Curso,status_code=status.HTTP_201_CREATED):
     next_id:int = len(cursos)+1
     cursos[next_id] = curso
     del curso.id
-    return curso    
+    return curso
+
+# PUT - UPDATE
+@app.put('/cursos/{id}')
+async def put_curso(id: int, curso: Curso):
+    if id in cursos:
+        cursos[id] = curso
+        del curso.id
+        return curso
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"Não existe um curso com o {id}")
+
     
 if __name__ == "__main__":
     import uvicorn
