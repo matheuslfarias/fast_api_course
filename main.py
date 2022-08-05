@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
-from fastapi import status
+from fastapi import status, Path
 from models import Curso
 from fastapi.responses import Response
 
@@ -30,7 +30,11 @@ async def get_cursos():
 
 # GET - ID
 @app.get('/cursos/{id}')
-async def get_curso(id: int):
+async def get_curso(id: int = Path(default=None,
+                                   title="ID do curso"),
+                                   description="Deve ser entre 1 e 2",
+                                   gt=0,
+                                   lt=3):
     try:
         return cursos[id]
     except KeyError:  # Trata o erro de id não encontrado.
