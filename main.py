@@ -1,14 +1,24 @@
 from fastapi import FastAPI, Query
 from fastapi import HTTPException
-from fastapi import status, Path, Query, Header
+from fastapi import status, Path, Query, Header, Depends
 from models import Curso
 from fastapi.responses import Response
-from typing import Optional
+from typing import Optional,List, Any
+from time import sleep
 
 app = FastAPI()
 
 
 # Dicionário de cursos, aqui serve como banco de dados.
+def fake_db():
+    try:
+        print("Iniciando banco de dados...")
+        sleep(1)
+    finally:
+        print("Banco de dados iniciado.")
+        sleep(1)
+        print("Fechando conexão com o banco de dados...")
+
 
 cursos = {
     1: {
@@ -25,7 +35,7 @@ cursos = {
 
 # Criando primeiro  - GET
 @app.get('/cursos')
-async def get_cursos():
+async def get_cursos(db: Any = Depends(fake_db)):
     return cursos
 
 # GET - ID
@@ -34,7 +44,8 @@ async def get_curso(id: int = Path(default=None,
                                    title="ID do curso"),
                                    description="Deve ser entre 1 e 2",
                                    gt=0,
-                                   lt=3):
+                                   lt=3,
+                    db: Any = Depends(fake_db)):
     try:
         return cursos[id]
     except KeyError:  # Trata o erro de id não encontrado.
@@ -43,7 +54,7 @@ async def get_curso(id: int = Path(default=None,
         
 # POST 
 @app.post('/cursos')
-async def post_curso(curso: Curso,status_code=status.HTTP_201_CREATED):
+async def post_curso(curso: Curso, status_code=status.HTTP_201_CREATED, db: Any = Depends(fake_db)):
     next_id:int = len(cursos)+1
     cursos[next_id] = curso
     del curso.id
@@ -51,7 +62,7 @@ async def post_curso(curso: Curso,status_code=status.HTTP_201_CREATED):
 
 # PUT - UPDATE
 @app.put('/cursos/{id}')
-async def put_curso(id: int, curso: Curso):
+async def put_curso(id: int, curso: Curso, db: Any = Depends(fake_db)):
     if id in cursos:
         cursos[id] = curso
         del curso.id
@@ -61,7 +72,7 @@ async def put_curso(id: int, curso: Curso):
 
 # DELETE
 @app.delete('/cursos/{id}')
-async def delete_curso(id:int):
+async def delete_curso(id: int, db: Any = Depends(fake_db)):
     if id in cursos:
         del cursos[id]
         return Response(status_code=status.HTTP_204_NO_CONTENT)
