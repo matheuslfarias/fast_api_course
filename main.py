@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query
 from fastapi import HTTPException
-from fastapi import status, Path
+from fastapi import status, Path, Query, Header
 from models import Curso
 from fastapi.responses import Response
 from typing import Optional
@@ -71,10 +71,13 @@ async def delete_curso(id:int):
 @app.get('/calculadora')
 async def calculadora(num1: int = Query(default=None,gt=5),
                       num2: int = Query(default=None,gt=10),
-                      num3: Optional[int] = Query(None)):
+                      num3: Optional[int] = None,
+                      x_geek: str = Header(default=None)):
     soma = num1 + num2 
     if num3:
         soma = soma+num3
+        
+    print(f"X-GEEK: {x_geek}")
     return {"resultado":soma}
 
 
