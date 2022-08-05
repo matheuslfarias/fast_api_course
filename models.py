@@ -6,7 +6,7 @@ from pydantic import BaseModel
 # e outras funcionalidades muito poderosas
 
 class Curso(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     titulo: str
     aulas: int
     horas: int

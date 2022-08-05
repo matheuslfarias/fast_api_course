@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi import status
+from models import Curso
 
 
 app = FastAPI()
@@ -34,7 +35,14 @@ async def get_curso(id: int):
     except KeyError:  # Trata o erro de id não encontrado.
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Curso não encontrado")
-    
+        
+# POST 
+@app.post('/cursos')
+async def post_curso(curso: Curso,status_code=status.HTTP_201_CREATED):
+    next_id:int = len(cursos)+1
+    cursos[next_id] = curso
+    del curso.id
+    return curso    
     
 if __name__ == "__main__":
     import uvicorn
